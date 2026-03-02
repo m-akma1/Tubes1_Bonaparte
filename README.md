@@ -1,4 +1,39 @@
-# Battlecode 2025 Scaffold - Java
+# Tugas Besar 1 IF2211 Strategi Algoritma
+
+**Battle Code 2025 with Greedy Algorithm**
+
+## Overview
+
+## Algorithm Strategy
+
+### Bot 1
+
+### Bot 2
+
+### Bot 3
+
+## Build and Run
+
+## Credits
+
+Made by 
+
+| Name                       | NIM      | Handle                                             |
+|----------------------------|----------|----------------------------------------------------|
+| Moh. Hafizh Irham Perdana  | 13524025 | [@hafizhperdana](https://github.com/hafizhperdana) |
+| Muhammad Jordan Ferimeison | 13524047 | [@Nyanist](https://github.com/Nyanist)             |
+| Muhammad Akmal             | 13524099 | [@m-akma1](https://github.com/m-akma1)             |
+
+For IF2211 Algorithm Strategy  
+Semester II AY 2025/2026  
+
+**Informatics Study Program**  
+**School of Electrical Engineering and Informatics**  
+**Bandung Institute of Technology**
+
+---
+
+## Battlecode 2025 Scaffold - Java
 
 This is the Battlecode 2025 Java scaffold, containing an `examplefuncsplayer`. Read https://play.battlecode.org/bc25java/quick_start !
 
