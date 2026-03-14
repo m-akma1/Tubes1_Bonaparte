@@ -1,13 +1,7 @@
 package examplefuncsplayer;
 
 import battlecode.common.*;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 
 /**
@@ -180,7 +174,6 @@ public class RobotPlayer {
 
         // Move and attack randomly if no objective.
         Direction dir = directions[rng.nextInt(directions.length)];
-        MapLocation nextLoc = rc.getLocation().add(dir);
         if (rc.canMove(dir)){
             rc.move(dir);
         }
