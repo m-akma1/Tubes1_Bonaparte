@@ -8,9 +8,9 @@ import battlecode.common.UnitType;
 
 class Tower extends Robot {
     private static final UnitType[] types = {
-        UnitType.SOLDIER,
-        UnitType.MOPPER,
-        UnitType.SPLASHER
+        UnitType.SOLDIER //,
+        // UnitType.MOPPER,
+        // UnitType.SPLASHER
     };
 
     public Tower(RobotController rc) {

@@ -37,7 +37,7 @@ class Tile {
 
         this.info = info;
         this.recordedAt = recordedAt;
-        this.messagePriority = 0;
+        computeMessagePriority(recordedAt);
     }
 
     public int encode() {
@@ -117,6 +117,33 @@ class Tile {
 
     public void updateMessagePriority(int messagePriority) {
         this.messagePriority = messagePriority;
+    }
+
+    public void computeMessagePriority(int currentTurn) {
+        if (this.info == null) return;
+
+        messagePriority = 0;
+        if (currentTurn - this.recordedAt > 25) {
+            messagePriority -= 2;
+        }
+
+        if (this.hasRuin()) {
+            messagePriority += 3;
+            return;
+        }
+        
+        switch (this.getMark()) {
+            case ENEMY_PRIMARY, ENEMY_SECONDARY:
+                messagePriority += 3;
+                break;
+            case ALLY_PRIMARY, ALLY_SECONDARY:
+                messagePriority += 6;
+                break;
+            case EMPTY:
+            default:
+                messagePriority += 9;
+                break;
+        }
     }
 
     public static int intFromPaintType(PaintType p) {
