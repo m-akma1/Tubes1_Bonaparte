@@ -1,4 +1,4 @@
-package lailaturCoder;
+package lailatulCoder;
 
 import java.util.Random;
 
@@ -6,7 +6,7 @@ import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.Message;
 import battlecode.common.RobotController;
-import lailaturCoder.Objective.Type;
+import lailatulCoder.Objective.Type;
 
 class Robot {
     protected RobotController rc;
@@ -50,9 +50,6 @@ class Robot {
 
     public void startTurn() {
         currentTurn++;
-
-        // Read messages
-        Message[] messages = rc.readMessages(currentTurn);
     }
 
     public void endTurn() {}

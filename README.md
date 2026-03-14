@@ -13,13 +13,13 @@
 The robot and tower's behavior are rules from their objective, a short term goals based on the current conditions. This objectives are sorted from the most high priority to the lowest, that is:
 1. Building: try to build new towers
 2. Exploring: explore unknown areas on the map
-3. Raiding: attack enemy's robot or tower
+3. Fighting: attack enemy's robot or tower
 4. Defending: defend and paint current area
 
 The objective switching are specified based on the current condition in a robot. But, in general, the criteria is:
 1. If there's a ruin that has not yet been build, switch to Building
 2. If there's tiles in the map that's unknown, switch to Exploring
-3. If there's enemy robot/towers nearby, switch to Raiding
+3. If there's enemy robot/towers nearby, switch to Fighting
 4. Default to defend the current area.
 
 ### Map, Message, dan Area
@@ -104,7 +104,7 @@ Sub-objective: Adventure
 3. If encounters a ruin, switch mode to building.
 4. If encounters enemy robots:
     * If there's enemy paint nearby, return to the tower (retreat).
-    * If there's allied paint or empty, switch mode to raiding.
+    * If there's allied paint or empty, switch mode to Fighting.
 5. If the current paint is less than 50% (soldier) or 25% (mopper), return to tower (retreat).
 
 Subobjective: Retreat
@@ -121,11 +121,11 @@ Subobjective: Retreat
 4. When in range to a tower, broadcast 5 most prioritized messages.
 5. Switch to defending unless new objective are sent.
 
-## Objective: Raiding
+## Objective: Fighting
 
 ### Description
 
-The main objective of raiding is to attack enemy's robot or tower. The robot will be sent to the nearest enemy robot or tower, and will try to paint the area around it. The robot will switch to other objective based on the current condition, such as if there's a ruin that has not yet been build, switch to Building, if there's unknown area on the map, switch to Exploring, or if there's no enemy robot or tower nearby, switch to Defending.
+The main objective of Fighting is to attack enemy's robot or tower. The robot will be sent to the nearest enemy robot or tower, and will try to paint the area around it. The robot will switch to other objective based on the current condition, such as if there's a ruin that has not yet been build, switch to Building, if there's unknown area on the map, switch to Exploring, or if there's no enemy robot or tower nearby, switch to Defending.
 
 ### Tower Behavior
 
@@ -159,7 +159,6 @@ The main objective of raiding is to attack enemy's robot or tower. The robot wil
 
 The main objective of defending is to defend and paint current area in a circular pattern. The robot will try to paint the area around it, and will switch to other objective based on the current condition. If a robot is connected to a tower, it will try to complete special resource pattern to increate mining speed of the tower. Tower will try to upgrade itself while strategizing about the current map condition.
 
-
 ### Tower Behavior
 
 1. If the current level is 1:
@@ -176,20 +175,11 @@ The main objective of defending is to defend and paint current area in a circula
 4. If there's nearby robot with low paint, refill it.
 5. If is not the center of a special resource pattern, assign a soldier to complete it.
 
-
 ### Robot Behavior
 
 1. If low on paint, try to get paint from the tower or nearby mopper.
 2. If assigned to complete a special resource pattern, try to complete it.
 3. Default to patrol in a circular pattern around the tower in radius of 5.
-
-### Bot 1
-
-### Bot 2
-
-### Bot 3
-
-## Build and Run
 
 ## Credits
 

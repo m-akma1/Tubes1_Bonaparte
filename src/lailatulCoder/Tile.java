@@ -1,4 +1,4 @@
-package lailaturCoder;
+package lailatulCoder;
 
 import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
