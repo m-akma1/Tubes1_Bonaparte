@@ -1,41 +1,39 @@
 package lailatulCoder;
 
+import java.util.Random;
+
 import battlecode.common.Clock;
 import battlecode.common.GameActionException;
 import battlecode.common.RobotController;
-import battlecode.common.UnitType;
 
 public class RobotPlayer {
-    private static Robot robot = null;
-    private static Tower tower = null;
+    private static Robot robot;
+    private static Random rng = new Random(2211);
 
     public static void run(RobotController rc) throws GameActionException {
+        try {
+            robot = switch (rc.getType()) {
+                case SOLDIER -> new Soldier(rc, rng.nextInt());
+                case MOPPER -> new Mopper(rc, rng.nextInt());
+                case SPLASHER -> new Splasher(rc, rng.nextInt());
+                default -> new Tower(rc, rng.nextInt());
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+            rc.disintegrate();
+        }
+
         while (true) {
             try {
-                UnitType unit = rc.getType();
-                switch (unit) {
-                    // TODO: Implement child class (extended from Robot) for each type of robot and call the play method here
-                    case SOLDIER:
-                        robot = (robot == null) ? new Robot(rc) : robot;
-                        robot.play();
-                        break;
-                    case MOPPER:
-                        robot = (robot == null) ? new Robot(rc) : robot;
-                        robot.play();
-                        break;
-                    case SPLASHER:
-                        robot = (robot == null) ? new Robot(rc) : robot;
-                        robot.play();
-                        break;
-                    default:
-                        tower = (tower == null) ? new Tower(rc) : tower;
-                        tower.play();
-                        break;
-                }
+                robot.play();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                System.out.println("Bytecode Used: " + Clock.getBytecodeNum() + " | Left: " + Clock.getBytecodesLeft() + " | Type: " + rc.getType());
+                int bytecodeUsed = Clock.getBytecodeNum();
+                int bytecodeLeft = Clock.getBytecodesLeft();
+                if (bytecodeLeft < 1000) {
+                    System.out.println("Warning: Low bytecode remaining! Used: " + bytecodeUsed + ", Left: " + bytecodeLeft);
+                }
                 Clock.yield();
             }
         }
