@@ -6,6 +6,10 @@ public class MapState {
     public static final int MAX_MAP_AREA = 3600;
     public static int width = 60;
     public static int[] grid = new int[MAX_MAP_AREA];
+    
+    // Track only updated indices to avoid 3600 loops
+    public static int[] activeRobotIndices = new int[200];
+    public static int numActiveRobots = 0;
 
     /**
      * Layout from LSB
@@ -31,24 +35,26 @@ public class MapState {
         return (cell & 1) != 0;
     }
 
-    public static void setWall(int cell, boolean isWall) {
+    public static int setWall(int cell, boolean isWall) {
         if (isWall) {
             cell |= 1;
         } else {
             cell &= ~1;
         }
+        return cell;
     }
 
     public static boolean isRuin(int cell) {
         return (cell & 2) != 0;
     }
 
-    public static void setRuin(int cell, boolean isRuin) {
+    public static int setRuin(int cell, boolean isRuin) {
         if (isRuin) {
             cell |= 2;
         } else {
             cell &= ~2;
         }
+        return cell;
     }
 
     /**
@@ -72,7 +78,7 @@ public class MapState {
         };
     }
 
-    public static void setPaintType(int cell, PaintType paintType) {
+    public static int setPaintType(int cell, PaintType paintType) {
         cell &= ~(0x7 << 2); // Clear existing paint type
         int paintValue = switch (paintType) {
             case EMPTY -> 0;
@@ -82,6 +88,7 @@ public class MapState {
             case ENEMY_SECONDARY -> 5;
         };
         cell |= (paintValue & 0x7) << 2; // Set new paint type
+        return cell;
     }
 
     public static PaintType getMarkType(int cell) {
@@ -97,7 +104,7 @@ public class MapState {
 
     }
 
-    public static void setMarkType(int cell, PaintType markType) {
+    public static int setMarkType(int cell, PaintType markType) {
         cell &= ~(0x7 << 5); // Clear existing mark type
         int markValue = switch (markType) {
             case EMPTY -> 0;
@@ -107,30 +114,33 @@ public class MapState {
             case ENEMY_SECONDARY -> 5;
         };
         cell |= (markValue & 0x7) << 5; // Set new mark type
+        return cell;
     }
 
     public static boolean hasRobot(int cell) {
         return (cell & 0x100) != 0;
     }
 
-    public static void setHasRobot(int cell, boolean hasRobot) {
+    public static int setHasRobot(int cell, boolean hasRobot) {
         if (hasRobot) {
             cell |= 0x100;
         } else {
             cell &= ~0x100;
         }
+        return cell;
     }
 
     public static boolean isAlly(int cell) {
         return (cell & 0x200) != 0;
     }
 
-    public static void setAlly(int cell, boolean isAlly) {
+    public static int setAlly(int cell, boolean isAlly) {
         if (isAlly) {
             cell |= 0x200;
         } else {
             cell &= ~0x200;
         }
+        return cell;
     }
 
     /**
@@ -149,7 +159,7 @@ public class MapState {
         };
     }
 
-    public static void setRobotType(int cell, UnitType robotType) {
+    public static int setRobotType(int cell, UnitType robotType) {
         cell &= ~(0x3 << 9); // Clear existing robot type
         int robotValue = switch (robotType) {
             case SOLDIER -> 0;
@@ -158,16 +168,18 @@ public class MapState {
             default -> 0;
         };
         cell |= (robotValue & 0x3) << 9; // Set new robot type
+        return cell;
     }
 
     public static int getPaintAmount(int cell) {
         return (cell >> 12) & 0xFF;
     }
 
-    public static void setPaintAmount(int cell, int amount) {
+    public static int setPaintAmount(int cell, int amount) {
         amount = Math.max(0, Math.min(255, amount)); // Clamp to 0-255
         cell &= ~(0xFF << 12); // Clear existing paint amount
         cell |= (amount & 0xFF) << 12; // Set new paint amount
+        return cell;
     }
 
     public static void resetCell(int cell) {
@@ -175,15 +187,21 @@ public class MapState {
     }
 
     public static void updateMap(RobotController rc) throws GameActionException {
+        // Clear ONLY old robot positions based on last turn's count
+        for (int i = 0; i < numActiveRobots; i++) {
+            grid[activeRobotIndices[i]] &= ~0x100;
+        }
+        numActiveRobots = 0;
+
         MapInfo[] sensed = rc.senseNearbyMapInfos();
         for (MapInfo info : sensed) {
             int index = locToIndex(info.getMapLocation());
             if (index >= 0 && index < grid.length) {
                 int cell = grid[index];
-                setWall(cell, info.isWall());
-                setRuin(cell, info.hasRuin());
-                setPaintType(cell, info.getPaint());
-                setMarkType(cell, info.getMark());
+                cell = setWall(cell, info.isWall());
+                cell = setRuin(cell, info.hasRuin());
+                cell = setPaintType(cell, info.getPaint());
+                cell = setMarkType(cell, info.getMark());
                 grid[index] = cell;
             }
         }
@@ -193,10 +211,15 @@ public class MapState {
             int index = locToIndex(robot.getLocation());
             if (index >= 0 && index < grid.length) {
                 int cell = grid[index];
-                setHasRobot(cell, true);
-                setAlly(cell, robot.getTeam() == rc.getTeam());
-                setRobotType(cell, robot.getType());
+                cell = setHasRobot(cell, true);
+                cell = setAlly(cell, robot.getTeam() == rc.getTeam());
+                cell = setRobotType(cell, robot.getType());
                 grid[index] = cell;
+                
+                // Track this index so we can clear it effectively next turn
+                if (numActiveRobots < activeRobotIndices.length) {
+                    activeRobotIndices[numActiveRobots++] = index;
+                }
             }
         }
     }

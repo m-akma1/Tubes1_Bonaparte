@@ -29,11 +29,11 @@ public class RobotPlayer {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
+                String robotType = rc.getType().toString();
+                int roundNum = robot.getRoundNum();
                 int bytecodeUsed = Clock.getBytecodeNum();
                 int bytecodeLeft = Clock.getBytecodesLeft();
-                if (bytecodeLeft < 1000) {
-                    System.out.println("Warning: Low bytecode remaining! Used: " + bytecodeUsed + ", Left: " + bytecodeLeft);
-                }
+                System.out.println("Robot: " + robotType + ", Round: " + roundNum + ", Bytecode Used: " + bytecodeUsed + ", Left: " + bytecodeLeft);
                 Clock.yield();
             }
         }

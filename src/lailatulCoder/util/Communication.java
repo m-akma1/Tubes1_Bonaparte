@@ -3,6 +3,10 @@ package lailatulCoder.util;
 import battlecode.common.MapLocation;
 
 public class Communication {
+    public static final int MSG_MOPPER_REQUEST = 1;
+    public static final int MSG_ENEMY_SPOTTED  = 2;
+    public static final int MSG_TOWER_BUILT    = 3;
+    
     // Format: 4 bits message type | 12 bits X | 12 bits Y | 4 for future use
     public static int encodeMessage(int messageType, MapLocation loc) {
         int encoded = (messageType & 0xF) << 28;

@@ -8,7 +8,8 @@ public class Objective {
         REFILL,
         EXPLORE,
         DEFEND,
-        FIGHT
+        FIGHT,
+        MOP_RUIN
     }
 
     public Type type;
