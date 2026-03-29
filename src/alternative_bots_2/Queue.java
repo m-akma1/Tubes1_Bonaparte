@@ -1,4 +1,4 @@
-package spammer;
+package alternative_bots_2;
 
 class Queue<T> {
     private Object[] elements;

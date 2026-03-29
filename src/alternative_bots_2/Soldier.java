@@ -1,4 +1,4 @@
-package spammer;
+package alternative_bots_2;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -9,15 +9,14 @@ import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 
-class Mopper extends Robot {
-    // private static final double PAINT_CAPACITY = 300;
-    // private static final double HEALTH = 150;
+class Soldier extends Robot {
+    // private static final double PAINT_CAPACITY = 200;
+    // private static final double HEALTH = 250;
 
     private Queue<MapLocation> tileTargets = new Queue<>(8);
     private Queue<MapLocation> robotTargets = new Queue<>(8);
-    private static int[] mopSwing = {0, 0, 0, 0}; // NORTH, EAST, SOUTH, WEST
 
-    public Mopper(RobotController rc, int seed) throws IllegalArgumentException {
+    public Soldier(RobotController rc, int seed) throws IllegalArgumentException {
         super(rc, seed);
     }
 
@@ -27,42 +26,29 @@ class Mopper extends Robot {
             if (info.getTeam() != rc.getTeam()) {
                 UnitType type = info.getType();
                 switch (type) {
-                    case SOLDIER, MOPPER, SPLASHER: // Only target enemy robots
+                    case SOLDIER, MOPPER, SPLASHER: break;
+                    default: // Only attack towers
                         MapLocation loc = info.getLocation();
                         if (!rc.canAttack(loc)) continue;
-
-                        // Update mopSwing for directional preference
-                        mopSwing = new int[]{0, 0, 0, 0}; // Reset swings
-                        Direction dir = Util.cardinal(currentPosition, loc);
-                        switch (dir) {
-                            case NORTH: mopSwing[0]++; break;
-                            case EAST: mopSwing[1]++; break;
-                            case SOUTH: mopSwing[2]++; break;
-                            case WEST: mopSwing[3]++; break;
-                            default: break;
-                        }
-                        
-                        // Enqueue the target
                         try {
                             robotTargets.enqueue(loc);
                         } catch (Exception e) {
                             break;
                         }
                         break;
-                    default: break;
                 }
             } else {
                 UnitType type = info.getType();
                 int minDistance = Integer.MAX_VALUE;
                 switch (type) {
-                    case SOLDIER: // Only cares about soldiers
+                    case SOLDIER, MOPPER, SPLASHER: break;
+                    default: // Update lastAlly (tower) if it's closer
                         int distance = Util.manhattanDistance(currentPosition, info.getLocation());
                         if (distance < minDistance) {
                             minDistance = distance;
                             lastAlly = info.getLocation();
                         }
                         break;
-                    default: break;
                 }
             }
         }
@@ -71,7 +57,7 @@ class Mopper extends Robot {
     void updateTileTargets() throws GameActionException {
         MapInfo[] sensed = rc.senseNearbyMapInfos();
         for (MapInfo info : sensed) {
-            if (info.getPaint() == PaintType.ENEMY_PRIMARY || info.getPaint() == PaintType.ENEMY_SECONDARY) {
+            if (info.getPaint() == PaintType.EMPTY) {
                 MapLocation loc = info.getMapLocation();
                 if (!rc.canAttack(loc)) continue;
 
@@ -133,33 +119,7 @@ class Mopper extends Robot {
             return;
         }
 
-        // Prioritize mop swing if possible
-        int dirIndex = 0, maxSwing = mopSwing[0];
-        for (int i = 0; i < mopSwing.length; i++) {
-            if (mopSwing[i] > maxSwing) {
-                maxSwing = mopSwing[i];
-                dirIndex = i;
-            }
-        }
-
-        // Mop swing
-        if (maxSwing > 1) {
-            Direction preferredDir = switch (dirIndex) {
-                case 0 -> Direction.NORTH;
-                case 1 -> Direction.EAST;
-                case 2 -> Direction.SOUTH;
-                case 3 -> Direction.WEST;
-                default -> null;
-            };
-            if (preferredDir != null) {
-                if (rc.canMopSwing(preferredDir)) {
-                    rc.mopSwing(preferredDir);
-                    return; // Mop swing once per turn
-                }
-            }
-        }
-
-        // Normal attack
+        // Prioritize attacking robots over tiles
         MapLocation target = null;
         try {
             if (!robotTargets.isEmpty()) {
@@ -176,17 +136,11 @@ class Mopper extends Robot {
             // Queue is empty, will wander instead
             if (target == null) {
                 wander();
-                robotTargets = new Queue<>(8);
                 tileTargets = new Queue<>(8);
+                robotTargets = new Queue<>(8);
                 return;
             }
         }
 
-        // Refill nearby allies if possible
-        if (lastAlly != null && rc.canTransferPaint(lastAlly, 1)) {
-            int paint = Math.min(rc.getPaint(), 50);
-            rc.transferPaint(currentPosition, paint);
-            return; // Refill once per turn
-        }
     }
 }

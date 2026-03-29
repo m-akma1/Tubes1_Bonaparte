@@ -1,4 +1,4 @@
-package spammer;
+package alternative_bots_2;
 
 import battlecode.common.Direction;
 import battlecode.common.MapLocation;
