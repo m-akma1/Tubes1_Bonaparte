@@ -1,4 +1,4 @@
-package birdiebot;
+package main_bot;
 
 import battlecode.common.*;
 

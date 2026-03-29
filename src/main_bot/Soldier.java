@@ -1,4 +1,4 @@
-package birdiebot;
+package main_bot;
 
 import battlecode.common.*;
 
@@ -103,6 +103,7 @@ public class Soldier {
                 case LEVEL_ONE_MONEY_TOWER:   {Util.builtMoney++; System.out.println("Built Money Tower at " + ruin); break;}
                 case LEVEL_ONE_DEFENSE_TOWER: {Util.builtDefense++; System.out.println("Built Defense Tower at " + ruin); break;}
                 case LEVEL_ONE_PAINT_TOWER:   {Util.builtPaint++; System.out.println("Built Paint Tower at " + ruin); break;}
+                default: break;
             }
             System.out.println("Tower numbers - Money: " + Util.builtMoney + ", Defense: " + Util.builtDefense + ", Paint: " + Util.builtPaint);
         }
